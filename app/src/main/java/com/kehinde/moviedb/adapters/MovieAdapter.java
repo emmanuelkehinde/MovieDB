@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kehinde.moviedb.R;
 import com.kehinde.moviedb.models.Movie;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,9 +25,8 @@ import java.util.ArrayList;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder>{
 
-    private final FragmentActivity mContext;
-    private final ArrayList<Movie> movieList;
-    private ImageView img_movie_poster;
+    private FragmentActivity mContext;
+    private ArrayList<Movie> movieList;
 
     final private MoviePosterClickListener moviePosterClickListener;
 
@@ -41,16 +43,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     }
 
-    public class MovieViewHolder extends RecyclerView.ViewHolder
+    class MovieViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        public TextView devUName;
+        private ImageView img_movie_poster;
+        private ProgressBar placeholderProgress;
 
-        public MovieViewHolder(final View itemView) {
+        MovieViewHolder(final View itemView) {
             super(itemView);
 
-            img_movie_poster=(ImageView) mContext.findViewById(R.id.img_movie_poster);
-
+            img_movie_poster=(ImageView) itemView.findViewById(R.id.img_movie_poster);
+            placeholderProgress= (ProgressBar) itemView.findViewById(R.id.placeholderProgress);
             itemView.setOnClickListener(this);
         }
 
@@ -71,42 +74,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     @Override
-    public void onBindViewHolder(MovieViewHolder holder, int position) {
-        final Movie movie=movieList.get(position);
+    public void onBindViewHolder(final MovieViewHolder holder, int position) {
+        Movie movie=movieList.get(position);
 
-        Picasso.with(mContext).load(movie.getPoster_url()).into(img_movie_poster);
+        Picasso.with(mContext).load(movie.getPoster_url()).into(holder.img_movie_poster, new Callback() {
+            @Override
+            public void onSuccess() {
+                holder.placeholderProgress.setVisibility(View.GONE);
+            }
 
+            @Override
+            public void onError() {
+                holder.placeholderProgress.setVisibility(View.GONE);
+            }
+        });
 
-
-
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                boolean isTwoPane=false;
-//                if (mContext.findViewById(R.id.detailContainer)!=null){
-//                    isTwoPane=true;
-//                }
-//
-//                if (isTwoPane){
-//                    LinearLayout linearLayout= (LinearLayout)mContext.findViewById(R.id.instruction);
-//                    if(linearLayout!=null){
-//                        linearLayout.setVisibility(View.GONE);
-//                    }
-//
-//                    DevelopersDetailsFragment developersDetailsFragment=new DevelopersDetailsFragment();
-//                    developersDetailsFragment.setArguments(developer.toBundle());
-//
-//                    mContext.getSupportFragmentManager().beginTransaction()
-//                            .replace(R.id.detailContainer,developersDetailsFragment)
-//                            .commit();
-//                }else {
-//                    Intent intent=new Intent(mContext, DevelopersDetailsActivity.class);
-//                    intent.putExtra(Constants.BUNDLE,developer.toBundle());
-//                    mContext.startActivity(intent);
-//                }
-//            }
-//        });
 
     }
 

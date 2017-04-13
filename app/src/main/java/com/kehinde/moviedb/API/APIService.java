@@ -12,9 +12,9 @@ import retrofit2.http.GET;
 
 public interface APIService {
 
-    @GET("search/users?q=type:user+location:lagos+language:java")
+    @GET("movie/popular?api_key=[API_KEY]")
     Call<JsonObject> getPopularMovies();
 
-    @GET("search/users?q=type:user+location:lagos+language:java")
+    @GET("movie/top_rated?api_key=[API_KEY]")
     Call<JsonObject> getTopRatedMovies();
 }

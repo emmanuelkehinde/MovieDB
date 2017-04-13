@@ -2,27 +2,35 @@ package com.kehinde.moviedb.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.kehinde.moviedb.API.APIService;
 import com.kehinde.moviedb.R;
+import com.kehinde.moviedb.activities.MovieDetailActivity;
 import com.kehinde.moviedb.adapters.MovieAdapter;
 import com.kehinde.moviedb.data.Constants;
 import com.kehinde.moviedb.data.Util;
 import com.kehinde.moviedb.models.Movie;
 
+import java.io.Console;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -41,6 +49,7 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
     private ArrayList<Movie> movieList = new ArrayList<>();
     private ProgressDialog progressDialog;
     private MovieAdapter movieAdapter;
+    private CoordinatorLayout coord_layout;
 
     public MovieGridFragment() {
         // Required empty public constructor
@@ -52,6 +61,7 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View mView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
+        setHasOptionsMenu(true);
 
         progressDialog=new ProgressDialog(getContext());
         progressDialog.setMessage("Getting a list of popular movies...");
@@ -59,19 +69,19 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
         progressDialog.setIndeterminate(true);
 
         movieGridRecyclerView = (RecyclerView) mView.findViewById(R.id.movieGridRecyclerView);
+        coord_layout= (CoordinatorLayout) mView.findViewById(R.id.coord_layout);
 
-        if (movieList.isEmpty()) {
+        if (movieList!=null) {
             getAllMovies(Util.getRatingBy());
         }
         return mView;
     }
 
-    private void getAllMovies(String rating_by) {
+    private void getAllMovies(final String rating_by) {
 
         if (Util.isOnline(getActivity())) {
-            progressDialog.show();
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://api.github.com/")
+                    .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
@@ -79,8 +89,12 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
 
             Call<JsonObject> call;
             if (rating_by.equals(Constants.POPULAR)){
+                progressDialog.setMessage("Getting a list of popular movies...");
+                progressDialog.show();
                 call = apiService.getPopularMovies();
             }else{
+                progressDialog.setMessage("Getting a list of top-rated movies...");
+                progressDialog.show();
                 call = apiService.getTopRatedMovies();
             }
 
@@ -88,12 +102,31 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
+                    movieList.clear();
+                    JsonObject jsonObject=response.body();
+                    JsonArray jsonArray=jsonObject.getAsJsonArray("results");
 
-                    Toast.makeText(getActivity(), "Received", Toast.LENGTH_SHORT).show();
+                    String image_path="http://image.tmdb.org/t/p/w185/";
+
+                    for (JsonElement jsonElement:jsonArray){
+                        movieList.add(new Movie(jsonElement.getAsJsonObject().get("original_title").getAsString(),
+                                image_path + jsonElement.getAsJsonObject().get("poster_path").getAsString(),
+                                jsonElement.getAsJsonObject().get("overview").getAsString(),
+                                jsonElement.getAsJsonObject().get("vote_average").getAsString(),
+                                jsonElement.getAsJsonObject().get("release_date").getAsString()));
+                    }
+
                     setAdapter();
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false);
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
                     movieGridRecyclerView.setLayoutManager(gridLayoutManager);
                     movieGridRecyclerView.setAdapter(movieAdapter);
+
+
+                    if (rating_by.equals(Constants.POPULAR)){
+                        Util.setRatingBy(Constants.POPULAR);
+                    }else{
+                        Util.setRatingBy(Constants.TOP_RATED);
+                    }
 
                     progressDialog.hide();
                 }
@@ -101,7 +134,8 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
                 @Override
                 public void onFailure(Call<JsonObject> call, Throwable t) {
 
-                    Snackbar snackbar = Snackbar.make(movieGridRecyclerView, t.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE);
+                    Log.e("error",t.getLocalizedMessage());
+                    Snackbar snackbar = Snackbar.make(coord_layout, "Error, please try again", Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction("Reload", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -116,11 +150,11 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
 
         }else{
 
-            Snackbar snackbar = Snackbar.make(movieGridRecyclerView, "Unable to connect, check your Internet connection", Snackbar.LENGTH_INDEFINITE);
+            Snackbar snackbar = Snackbar.make(coord_layout, "Unable to connect, check your Internet connection", Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction("Reload", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getAllMovies(Util.getRatingBy());
+                    getAllMovies(rating_by);
                 }
             });
             snackbar.show();
@@ -144,6 +178,8 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        item.setChecked(true);
+
         if (item.getItemId()==R.id.sort_by_popular) {
             sortByPopular();
         }else {
@@ -154,16 +190,16 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
     }
 
     private void sortByPopular() {
-        if (Util.getRatingBy().equals(Constants.POPULAR)){
-            Toast.makeText(getActivity(), "Already rated by Popular", Toast.LENGTH_SHORT).show();
+        if (Util.getRatingBy().equals(Constants.POPULAR) && !movieList.isEmpty()){
+            Toast.makeText(getActivity(), "Already sorted by Most Popular", Toast.LENGTH_SHORT).show();
         }else{
             getAllMovies(Constants.POPULAR);
         }
     }
 
     private void sortByTopRated() {
-        if (Util.getRatingBy().equals(Constants.TOP_RATED)){
-            Toast.makeText(getActivity(), "Already rated by Top-Rated", Toast.LENGTH_SHORT).show();
+        if (Util.getRatingBy().equals(Constants.TOP_RATED) && !movieList.isEmpty()){
+            Toast.makeText(getActivity(), "Already sorted by Top-Rated", Toast.LENGTH_SHORT).show();
         }else{
             getAllMovies(Constants.TOP_RATED);
         }
@@ -171,7 +207,31 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
 
     @Override
     public void onMoviePosterClick(int clickedPosterIndex) {
-        Toast.makeText(getActivity(), clickedPosterIndex, Toast.LENGTH_SHORT).show();
+
+        Movie movie=movieList.get(clickedPosterIndex);
+
+        boolean isTwoPane=false;
+        if (getActivity().findViewById(R.id.detailContainer)!=null){
+            isTwoPane=true;
+        }
+
+        if (isTwoPane){
+            LinearLayout linearLayout= (LinearLayout)getActivity().findViewById(R.id.instruction);
+            if(linearLayout!=null){
+                linearLayout.setVisibility(View.GONE);
+            }
+
+            MovieDetailFragment movieDetailFragment=new MovieDetailFragment();
+            movieDetailFragment.setArguments(movie.toBundle());
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detailContainer,movieDetailFragment)
+                    .commit();
+        }else {
+            Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
+            intent.putExtra(Constants.BUNDLE,movie.toBundle());
+            getActivity().startActivity(intent);
+        }
     }
 
 }

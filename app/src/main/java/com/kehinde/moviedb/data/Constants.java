@@ -8,5 +8,13 @@ public class Constants {
     public static String BUNDLE="BUNDLE";
     public static String POPULAR="popular";
     public static String TOP_RATED="top_rated";
+    public static String BASE_URL="https://api.themoviedb.org/3/";
+
+    public static String TITLE="title";
+    public static String POSTER_URL="poster_url";
+    public static String SYNOPSIS="synopsis";
+    public static String RATING="rating";
+    public static String RELEASE_DATE="release_date";
+
 
 }

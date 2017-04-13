@@ -1,24 +1,28 @@
 package com.kehinde.moviedb.models;
 
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.kehinde.moviedb.data.Constants;
 
 /**
  * Created by kehinde on 4/10/17.
  */
 
-public class Movie {
+public class Movie implements Parcelable {
 
     private String title;
     private String poster_url;
     private String synopsis;
-    private int rating;
+    private String rating;
     private String release_date;
 
     public Movie() {
 
     }
 
-    public Movie(String title, String poster_url, String synopsis, int rating, String release_date) {
+    public Movie(String title, String poster_url, String synopsis, String rating, String release_date) {
         this.title = title;
         this.poster_url = poster_url;
         this.synopsis = synopsis;
@@ -28,7 +32,11 @@ public class Movie {
 
     public Movie(Bundle arguments){
         if (arguments!=null){
-
+            this.title = arguments.getString(Constants.TITLE);
+            this.poster_url = arguments.getString(Constants.POSTER_URL);
+            this.synopsis = arguments.getString(Constants.SYNOPSIS);
+            this.rating = arguments.getString(Constants.RATING);
+            this.release_date = arguments.getString(Constants.RELEASE_DATE);
         }
     }
 
@@ -56,11 +64,11 @@ public class Movie {
         this.synopsis = synopsis;
     }
 
-    public int getRating() {
+    public String getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(String rating) {
         this.rating = rating;
     }
 
@@ -74,7 +82,25 @@ public class Movie {
 
     public Bundle toBundle(){
         Bundle bundle=new Bundle();
-
+        bundle.putString(Constants.TITLE,title);
+        bundle.putString(Constants.POSTER_URL,poster_url);
+        bundle.putString(Constants.SYNOPSIS,synopsis);
+        bundle.putString(Constants.RATING,rating);
+        bundle.putString(Constants.RELEASE_DATE,release_date);
         return bundle;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(title);
+        parcel.writeString(poster_url);
+        parcel.writeString(synopsis);
+        parcel.writeString(rating);
+        parcel.writeString(release_date);
     }
 }
