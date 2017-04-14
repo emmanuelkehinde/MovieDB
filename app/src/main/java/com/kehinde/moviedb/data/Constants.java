@@ -5,6 +5,8 @@ package com.kehinde.moviedb.data;
  */
 
 public class Constants {
+    public static final String STATE_BUNDLE = "state_bundle";
+    public static final String FRAG_TAG = "frag_tag";
     public static String BUNDLE="BUNDLE";
     public static String POPULAR="popular";
     public static String TOP_RATED="top_rated";

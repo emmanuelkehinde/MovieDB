@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kehinde.moviedb.R;
+import com.kehinde.moviedb.data.Constants;
 import com.kehinde.moviedb.models.Movie;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -30,6 +31,7 @@ public class MovieDetailFragment extends Fragment {
     private TextView det_movie_date;
     private TextView det_movie_overview;
     private ProgressBar det_progress_bar;
+    private Bundle b;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -39,12 +41,18 @@ public class MovieDetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle b=getArguments();
+        if (savedInstanceState!=null) {
+            b = savedInstanceState.getBundle(Constants.STATE_BUNDLE);
+        }else {
+            b = getArguments();
+        }
+
         if (b!=null){
             movie=new Movie(b);
         }
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,7 +65,6 @@ public class MovieDetailFragment extends Fragment {
         det_movie_date=(TextView)mView.findViewById(R.id.det_movie_date);
         det_movie_overview=(TextView)mView.findViewById(R.id.det_movie_overview);
         det_progress_bar= (ProgressBar) mView.findViewById(R.id.det_progress_bar);
-
 
 
         Picasso.with(getActivity()).load(movie.getPoster_url())
@@ -81,4 +88,11 @@ public class MovieDetailFragment extends Fragment {
         return mView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBundle(Constants.STATE_BUNDLE,b);
+
+    }
 }

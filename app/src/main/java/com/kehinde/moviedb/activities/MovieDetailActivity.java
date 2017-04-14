@@ -1,14 +1,20 @@
 package com.kehinde.moviedb.activities;
 
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.kehinde.moviedb.R;
 import com.kehinde.moviedb.data.Constants;
 import com.kehinde.moviedb.fragments.MovieDetailFragment;
+import com.kehinde.moviedb.models.Movie;
 
 public class MovieDetailActivity extends AppCompatActivity {
+
+    private Bundle bundle;
+    private MovieDetailFragment movieDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,13 +24,21 @@ public class MovieDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Movie Details");
 
-        MovieDetailFragment movieDetailFragment=new MovieDetailFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.detailContainer,movieDetailFragment)
-                .commit();
+        bundle = getIntent().getBundleExtra(Constants.BUNDLE);
 
-        Bundle bundle=getIntent().getBundleExtra(Constants.BUNDLE);
-        movieDetailFragment.setArguments(bundle);
+        if (savedInstanceState == null) {
+            movieDetailFragment = new MovieDetailFragment();
+            movieDetailFragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detailContainer, movieDetailFragment, Constants.FRAG_TAG)
+                    .commit();
+        }else{
+
+            movieDetailFragment= (MovieDetailFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAG_TAG);
+        }
+
+
 
     }
 
