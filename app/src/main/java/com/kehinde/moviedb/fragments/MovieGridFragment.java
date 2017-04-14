@@ -3,6 +3,7 @@ package com.kehinde.moviedb.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -117,7 +118,16 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
                     }
 
                     setAdapter();
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
+
+                    GridLayoutManager gridLayoutManager;
+
+                    if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+                         gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
+                    }
+                    else{
+                        gridLayoutManager = new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
+                    }
+
                     movieGridRecyclerView.setLayoutManager(gridLayoutManager);
                     movieGridRecyclerView.setAdapter(movieAdapter);
 

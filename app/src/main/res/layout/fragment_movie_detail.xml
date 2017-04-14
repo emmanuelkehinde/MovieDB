@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="@dimen/d12"
         android:orientation="vertical">
 
         <LinearLayout
@@ -41,32 +41,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingBottom="12dp">
+                android:paddingLeft="@dimen/d12"
+                android:paddingRight="@dimen/d12"
+                android:paddingBottom="@dimen/d12">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/det_movie_title"
-                    android:textSize="18sp"
-                    android:textColor="#111"/>
+                    android:textSize="@dimen/s18"
+                    tools:text="Test Title"
+                    android:textColor="@color/black1"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/det_movie_rating"
-                    android:textSize="14sp"
-                    android:layout_marginTop="12dp"
-                    android:textColor="#444"/>
+                    android:textSize="@dimen/s14"
+                    tools:text="6.0/10"
+                    android:layout_marginTop="@dimen/d12"
+                    android:textColor="@color/black4"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/det_movie_date"
-                    android:textSize="16sp"
-                    android:layout_marginTop="12dp"
-                    android:textColor="#222"/>
+                    android:textSize="@dimen/s16"
+                    tools:text="2016-02-15"
+                    android:layout_marginTop="@dimen/d12"
+                    android:textColor="@color/black2"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -74,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#aaa"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="@dimen/d16"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,17 +88,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/overview"
-                android:textSize="14sp"
-                android:layout_marginTop="8dp"
-                android:textColor="#666"/>
+                android:textSize="@dimen/s14"
+                android:layout_marginTop="@dimen/d8"
+                android:textColor="@color/black6"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/det_movie_overview"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp"
-                android:textColor="#222"/>
+                android:textSize="@dimen/s16"
+                tools:text="Test Overview"
+                android:layout_marginTop="@dimen/d8"
+                android:textColor="@color/black2"/>
         </LinearLayout>
     </LinearLayout>
 

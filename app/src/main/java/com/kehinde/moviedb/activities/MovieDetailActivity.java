@@ -24,7 +24,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Movie Details");
 
-        bundle = getIntent().getBundleExtra(Constants.BUNDLE);
+        if (getIntent()!=null && getIntent().hasExtra(Constants.BUNDLE)) {
+            bundle = getIntent().getBundleExtra(Constants.BUNDLE);
+        }
 
         if (getSupportFragmentManager().findFragmentByTag(Constants.FRAG_TAG) ==  null) {
             movieDetailFragment = new MovieDetailFragment();
