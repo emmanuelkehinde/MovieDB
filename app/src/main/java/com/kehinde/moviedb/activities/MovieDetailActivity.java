@@ -26,18 +26,14 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         bundle = getIntent().getBundleExtra(Constants.BUNDLE);
 
-        if (savedInstanceState == null) {
+        if (getSupportFragmentManager().findFragmentByTag(Constants.FRAG_TAG) ==  null) {
             movieDetailFragment = new MovieDetailFragment();
             movieDetailFragment.setArguments(bundle);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detailContainer, movieDetailFragment, Constants.FRAG_TAG)
                     .commit();
-        }else{
-
-            movieDetailFragment= (MovieDetailFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAG_TAG);
         }
-
 
 
     }
