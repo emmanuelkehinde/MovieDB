@@ -12,6 +12,7 @@ import com.kehinde.moviedb.data.Constants;
 
 public class Movie implements Parcelable {
 
+    private String id;
     private String title;
     private String poster_url;
     private String synopsis;
@@ -22,7 +23,8 @@ public class Movie implements Parcelable {
 
     }
 
-    public Movie(String title, String poster_url, String synopsis, String rating, String release_date) {
+    public Movie(String id, String title, String poster_url, String synopsis, String rating, String release_date) {
+        this.id=id;
         this.title = title;
         this.poster_url = poster_url;
         this.synopsis = synopsis;
@@ -32,12 +34,21 @@ public class Movie implements Parcelable {
 
     public Movie(Bundle arguments){
         if (arguments!=null){
+            this.id = arguments.getString(Constants.ID);
             this.title = arguments.getString(Constants.TITLE);
             this.poster_url = arguments.getString(Constants.POSTER_URL);
             this.synopsis = arguments.getString(Constants.SYNOPSIS);
             this.rating = arguments.getString(Constants.RATING);
             this.release_date = arguments.getString(Constants.RELEASE_DATE);
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -82,6 +93,7 @@ public class Movie implements Parcelable {
 
     public Bundle toBundle(){
         Bundle bundle=new Bundle();
+        bundle.putString(Constants.ID,id);
         bundle.putString(Constants.TITLE,title);
         bundle.putString(Constants.POSTER_URL,poster_url);
         bundle.putString(Constants.SYNOPSIS,synopsis);
@@ -103,4 +115,26 @@ public class Movie implements Parcelable {
         parcel.writeString(rating);
         parcel.writeString(release_date);
     }
+
+    protected Movie(Parcel in) {
+        id = in.readString();
+        title = in.readString();
+        poster_url = in.readString();
+        synopsis = in.readString();
+        rating = in.readString();
+        release_date = in.readString();
+    }
+
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

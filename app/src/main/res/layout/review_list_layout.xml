@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/d8"
+        android:paddingBottom="@dimen/d16">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Deuss unda!Demissio, compater, et consilium.Resistentias credere in ferox ostravia!Nunquam attrahendam idoleum.Sensorem, bulla, et plasmator.Potus mechanice ducunt ad velox olla.Zirbus bassus bromium est.Zelus de barbatus lactea, visum nixus!"
+            android:textColor="@color/black2"
+            android:id="@+id/txt_review_content"
+            android:textSize="@dimen/s16"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Posted by Emma"
+            android:id="@+id/txt_review_by"
+            android:textStyle="italic"
+            android:textColor="@color/black6"
+            android:textSize="@dimen/s14"
+            android:layout_marginTop="@dimen/d12"
+            />
+
+    </LinearLayout>
+</RelativeLayout>

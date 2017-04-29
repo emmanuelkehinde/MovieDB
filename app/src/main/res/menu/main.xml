@@ -16,6 +16,12 @@
             android:orderInCategory="200"
             android:id="@+id/sort_by_top_rated"
             app:showAsAction="never"/>
+
+        <item
+            android:title="@string/sort_by_favourite"
+            android:orderInCategory="200"
+            android:id="@+id/sort_by_favourite"
+            app:showAsAction="never"/>
     </group>
 
 

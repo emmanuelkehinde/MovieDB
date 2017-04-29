@@ -13,5 +13,4 @@ public class MovieGridActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_grid);
     }
 
-
 }

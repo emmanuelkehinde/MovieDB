@@ -4,6 +4,7 @@ package com.kehinde.moviedb.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -28,10 +29,10 @@ import com.kehinde.moviedb.R;
 import com.kehinde.moviedb.activities.MovieDetailActivity;
 import com.kehinde.moviedb.adapters.MovieAdapter;
 import com.kehinde.moviedb.data.Constants;
+import com.kehinde.moviedb.data.DatabaseHelper;
 import com.kehinde.moviedb.data.Util;
 import com.kehinde.moviedb.models.Movie;
 
-import java.io.Console;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -51,6 +52,7 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
     private ProgressDialog progressDialog;
     private MovieAdapter movieAdapter;
     private CoordinatorLayout coord_layout;
+    private DatabaseHelper databaseHelper;
 
     public MovieGridFragment() {
         // Required empty public constructor
@@ -64,6 +66,9 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
         View mView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
         setHasOptionsMenu(true);
 
+        databaseHelper=new DatabaseHelper(getActivity());
+
+
         progressDialog=new ProgressDialog(getContext());
         progressDialog.setMessage("Getting a list of popular movies...");
         progressDialog.setCancelable(false);
@@ -72,9 +77,15 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
         movieGridRecyclerView = (RecyclerView) mView.findViewById(R.id.movieGridRecyclerView);
         coord_layout= (CoordinatorLayout) mView.findViewById(R.id.coord_layout);
 
+
         if (movieList!=null) {
-            getAllMovies(Util.getRatingBy());
+            if (Util.getRatingBy().equals(Constants.FAVOURITE)){
+                sortByFavourite();
+            }else {
+                getAllMovies(Util.getRatingBy());
+            }
         }
+
         return mView;
     }
 
@@ -110,22 +121,29 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
                     String image_path="http://image.tmdb.org/t/p/w185/";
 
                     for (JsonElement jsonElement:jsonArray){
-                        movieList.add(new Movie(jsonElement.getAsJsonObject().get("original_title").getAsString(),
+                        movieList.add(new Movie(
+                                jsonElement.getAsJsonObject().get("id").getAsString(),
+                                jsonElement.getAsJsonObject().get("original_title").getAsString(),
                                 image_path + jsonElement.getAsJsonObject().get("poster_path").getAsString(),
                                 jsonElement.getAsJsonObject().get("overview").getAsString(),
                                 jsonElement.getAsJsonObject().get("vote_average").getAsString(),
                                 jsonElement.getAsJsonObject().get("release_date").getAsString()));
                     }
 
+
+
                     setAdapter();
 
-                    GridLayoutManager gridLayoutManager;
+                    GridLayoutManager gridLayoutManager = null;
 
-                    if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-                         gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
-                    }
-                    else{
-                        gridLayoutManager = new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
+                    if (getActivity()!=null) {
+                        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                            gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
+                        } else {
+                            gridLayoutManager = new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
+                        }
+                    }else{
+                        gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
                     }
 
                     movieGridRecyclerView.setLayoutManager(gridLayoutManager);
@@ -183,6 +201,12 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
 
         inflater.inflate(R.menu.main,menu);
 
+        if (Util.getRatingBy().equals(Constants.POPULAR))
+            menu.getItem(0).setChecked(true);
+        else if (Util.getRatingBy().equals(Constants.TOP_RATED))
+            menu.getItem(1).setChecked(true);
+        else menu.getItem(2).setChecked(true);
+
     }
 
     @Override
@@ -192,11 +216,58 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
 
         if (item.getItemId()==R.id.sort_by_popular) {
             sortByPopular();
-        }else {
+        }else if(item.getItemId()==R.id.sort_by_top_rated){
             sortByTopRated();
+        }else{
+            sortByFavourite();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sortByFavourite() {
+
+        if (Util.getRatingBy().equals(Constants.FAVOURITE) && !movieList.isEmpty()){
+            Toast.makeText(getActivity(), "Already sorted by Favourite", Toast.LENGTH_SHORT).show();
+        }else{
+            Cursor cursor=databaseHelper.viewAllData();
+
+            if (cursor.getCount()>0) {
+
+                movieList.clear();
+                while (cursor.moveToNext()) {
+                    movieList.add(new Movie(
+                            cursor.getString(1),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getString(5),
+                            cursor.getString(6)
+                    ));
+                }
+                Util.setRatingBy(Constants.FAVOURITE);
+
+                setAdapter();
+
+                GridLayoutManager gridLayoutManager = null;
+
+                if (getActivity()!=null) {
+                    if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
+                    } else {
+                        gridLayoutManager = new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
+                    }
+                }else{
+                    gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
+                }
+
+                movieGridRecyclerView.setLayoutManager(gridLayoutManager);
+                movieGridRecyclerView.setAdapter(movieAdapter);
+            }else{
+                Toast.makeText(getActivity(), "You have no movie marked as favourite.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     private void sortByPopular() {

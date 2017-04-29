@@ -5,102 +5,201 @@
     android:fillViewport="true"
     tools:context="com.kehinde.moviedb.fragments.MovieDetailFragment">
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/d12"
-        android:orientation="vertical">
+        android:id="@+id/det_coord_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/det_img_movie_poster"
-                    android:layout_width="160dp"
-                    android:scaleType="centerCrop"
-                    android:layout_height="220dp"/>
-
-                <ProgressBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:indeterminate="true"
-                    android:visibility="visible"
-                    android:id="@+id/det_progress_bar"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/d12"
-                android:paddingRight="@dimen/d12"
-                android:paddingBottom="@dimen/d12">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/det_movie_title"
-                    android:textSize="@dimen/s18"
-                    tools:text="Test Title"
-                    android:textColor="@color/black1"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/det_movie_rating"
-                    android:textSize="@dimen/s14"
-                    tools:text="6.0/10"
-                    android:layout_marginTop="@dimen/d12"
-                    android:textColor="@color/black4"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/det_movie_date"
-                    android:textSize="@dimen/s16"
-                    tools:text="2016-02-15"
-                    android:layout_marginTop="@dimen/d12"
-                    android:textColor="@color/black2"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#aaa"
-            android:layout_marginTop="@dimen/d16"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:padding="@dimen/d12"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/overview"
-                android:textSize="@dimen/s14"
-                android:layout_marginTop="@dimen/d8"
-                android:textColor="@color/black6"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/det_img_movie_poster"
+                        android:layout_width="160dp"
+                        android:scaleType="centerCrop"
+                        android:layout_height="230dp"/>
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:visibility="visible"
+                        android:id="@+id/det_progress_bar"
+                        android:layout_centerInParent="true"/>
+                </RelativeLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/d12"
+                    android:paddingRight="@dimen/d12"
+                    android:paddingBottom="@dimen/d12">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/det_movie_title"
+                        android:textSize="@dimen/s18"
+                        tools:text="Test Title"
+                        android:textColor="@color/black1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/det_movie_rating"
+                        android:textSize="@dimen/s14"
+                        tools:text="6.0/10"
+                        android:layout_marginTop="@dimen/d12"
+                        android:textColor="@color/black4"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/det_movie_date"
+                        android:textSize="@dimen/s14"
+                        tools:text="2016-02-15"
+                        android:layout_marginTop="@dimen/d12"
+                        android:textColor="@color/black2"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btn_favorite"
+                        android:layout_marginTop="@dimen/d16"
+                        style="?android:attr/starStyle"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#aaa"
+                android:layout_marginTop="@dimen/d16"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/det_movie_overview"
-                android:textSize="@dimen/s16"
-                tools:text="Test Overview"
-                android:layout_marginTop="@dimen/d8"
-                android:textColor="@color/black2"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/overview"
+                    android:textSize="@dimen/s14"
+                    android:layout_marginTop="@dimen/d8"
+                    android:textColor="@color/colorAccent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/det_movie_overview"
+                    android:textSize="@dimen/s16"
+                    tools:text="Test Overview"
+                    android:layout_marginTop="@dimen/d8"
+                    android:textColor="@color/black2"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#aaa"
+                android:layout_marginTop="@dimen/d16"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trailers"
+                    android:textSize="@dimen/s14"
+                    android:layout_marginTop="@dimen/d8"
+                    android:textColor="@color/colorAccent"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d8"
+                        android:id="@+id/trailersRecyclerView"
+                        >
+
+                    </android.support.v7.widget.RecyclerView>
+
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="true"
+                        android:visibility="visible"
+                        android:id="@+id/trailerPlaceholderProgress"
+                        />
+
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#aaa"
+                android:layout_marginTop="@dimen/d16"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reviews"
+                    android:textSize="@dimen/s14"
+                    android:layout_marginTop="@dimen/d8"
+                    android:textColor="@color/colorAccent"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d8"
+                        android:id="@+id/reviewsRecyclerView"
+                        >
+
+                    </android.support.v7.widget.RecyclerView>
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="true"
+                        android:visibility="visible"
+                        android:id="@+id/reviewPlaceholderProgress"
+                        />
+                </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </ScrollView>
