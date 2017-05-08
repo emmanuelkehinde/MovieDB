@@ -69,8 +69,6 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
     private DatabaseHelper databaseHelper;
 
 
-
-
     private Bundle b;
     private ArrayList<Review> reviewList=new ArrayList<>();
     private ArrayList<Trailer> trailerList=new ArrayList<>();
@@ -84,12 +82,14 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Get the movie bundle if saveInstanceState is not null or get it from the fragment argument if null
         if (savedInstanceState!=null) {
             b = savedInstanceState.getBundle(Constants.STATE_BUNDLE);
         }else {
             b = getArguments();
         }
 
+        //Get the movie object from the bundle if not null
         if (b!=null){
             movie=new Movie(b);
         }
@@ -124,6 +124,10 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
         if (txt_tap_movie != null) {
             if (movie != null) txt_tap_movie.setVisibility(View.GONE);
         }
+
+        //Enable smooth scrolling
+        trailersRecyclerView.setNestedScrollingEnabled(false);
+        reviewsRecyclerView.setNestedScrollingEnabled(false);
 
 
         Picasso.with(getActivity()).load(movie.getPoster_url())
@@ -170,6 +174,7 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
 
     private void getMovieReviewsAndTrailers() {
 
+        //Check if Internet is available first
         if (Util.isOnline(getActivity())) {
 
             getMovieTrailers();
@@ -188,6 +193,7 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
 
     }
 
+    //Method to get Movie Reviews
     private void getMovieReviews() {
 
         reviewPlaceholderProgress.setVisibility(View.VISIBLE);
@@ -242,6 +248,7 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
 
     }
 
+    //Method to get Movie Trailers
     private void getMovieTrailers() {
 
         trailerPlaceholderProgress.setVisibility(View.VISIBLE);
@@ -292,6 +299,7 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
 
     }
 
+    //Method to set Adapter for the trailer with an Interface implementation
     private void setTrailerAdapter() {
         trailerAdapter = new TrailerAdapter(getActivity(), trailerList, this);
     }
@@ -304,6 +312,7 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
 
     }
 
+    //Listening for clicks set from the adapters
     @Override
     public void onMovieTrailerClick(int clickedTrailerIndex) {
         String url="https://www.youtube.com/watch?v="+trailerList.get(clickedTrailerIndex).getKey();
@@ -311,5 +320,19 @@ public class MovieDetailFragment extends Fragment implements TrailerAdapter.Movi
         Intent urlIntent=new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         urlIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getActivity().startActivity(Intent.createChooser(urlIntent, "View Trailer"));
+    }
+
+    @Override
+    public void onShareClick(int clickedTrailerIndex) {
+        String url="https://www.youtube.com/watch?v="+trailerList.get(clickedTrailerIndex).getKey();
+        String msg="Checkout the trailer for "+ movie.getTitle()+" movie: "+url;
+
+        Intent urlIntent=new Intent();
+        urlIntent.setAction(Intent.ACTION_SEND);
+        urlIntent.putExtra(Intent.EXTRA_TEXT,msg);
+        urlIntent.setType("text/plain");
+        urlIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity().startActivity(Intent.createChooser(urlIntent, "Share Trailer"));
+
     }
 }

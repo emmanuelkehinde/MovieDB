@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -58,6 +59,14 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState!=null) {
+            movieList = savedInstanceState.getParcelableArrayList(Constants.MOVIE_LIST);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,12 +87,14 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
         coord_layout= (CoordinatorLayout) mView.findViewById(R.id.coord_layout);
 
 
-        if (movieList!=null) {
+        if (movieList.isEmpty()) {
             if (Util.getRatingBy().equals(Constants.FAVOURITE)){
                 sortByFavourite();
             }else {
                 getAllMovies(Util.getRatingBy());
             }
+        }else{
+            setUpMovieView();
         }
 
         return mView;
@@ -92,12 +103,8 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
     private void getAllMovies(final String rating_by) {
 
         if (Util.isOnline(getActivity())) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Constants.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
 
-            APIService apiService = retrofit.create(APIService.class);
+            APIService apiService = Util.getRetrofitInstance().create(APIService.class);
 
             Call<JsonObject> call;
             if (rating_by.equals(Constants.POPULAR)){
@@ -130,24 +137,7 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
                                 jsonElement.getAsJsonObject().get("release_date").getAsString()));
                     }
 
-
-
-                    setAdapter();
-
-                    GridLayoutManager gridLayoutManager = null;
-
-                    if (getActivity()!=null) {
-                        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                            gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
-                        } else {
-                            gridLayoutManager = new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
-                        }
-                    }else{
-                        gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
-                    }
-
-                    movieGridRecyclerView.setLayoutManager(gridLayoutManager);
-                    movieGridRecyclerView.setAdapter(movieAdapter);
+                   setUpMovieView();
 
 
                     if (rating_by.equals(Constants.POPULAR)){
@@ -194,6 +184,11 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
         movieAdapter = new MovieAdapter(getActivity(), movieList, this);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(Constants.MOVIE_LIST, movieList);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -225,6 +220,7 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
         return super.onOptionsItemSelected(item);
     }
 
+    //Method to sort by favourite which comes from the local DB
     private void sortByFavourite() {
 
         if (Util.getRatingBy().equals(Constants.FAVOURITE) && !movieList.isEmpty()){
@@ -244,30 +240,37 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
                             cursor.getString(5),
                             cursor.getString(6)
                     ));
+
                 }
                 Util.setRatingBy(Constants.FAVOURITE);
 
-                setAdapter();
+                setUpMovieView();
 
-                GridLayoutManager gridLayoutManager = null;
-
-                if (getActivity()!=null) {
-                    if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
-                    } else {
-                        gridLayoutManager = new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
-                    }
-                }else{
-                    gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
-                }
-
-                movieGridRecyclerView.setLayoutManager(gridLayoutManager);
-                movieGridRecyclerView.setAdapter(movieAdapter);
             }else{
                 Toast.makeText(getActivity(), "You have no movie marked as favourite.", Toast.LENGTH_SHORT).show();
             }
         }
 
+    }
+
+
+    private void setUpMovieView(){
+        setAdapter();
+
+        GridLayoutManager gridLayoutManager;
+
+        if (getActivity()!=null) {
+            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
+            } else {
+                gridLayoutManager = new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
+            }
+        }else{
+            gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
+        }
+
+        movieGridRecyclerView.setLayoutManager(gridLayoutManager);
+        movieGridRecyclerView.setAdapter(movieAdapter);
     }
 
     private void sortByPopular() {
@@ -291,6 +294,7 @@ public class MovieGridFragment extends Fragment implements MovieAdapter.MoviePos
 
         Movie movie=movieList.get(clickedPosterIndex);
 
+        //Check if we are on tablet
         boolean isTwoPane=false;
         if (getActivity().findViewById(R.id.detailContainer)!=null){
             isTwoPane=true;

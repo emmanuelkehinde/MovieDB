@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by kehinde on 4/10/17.
  */
@@ -25,5 +28,14 @@ public class Util {
 
     public static String getRatingBy(){
         return rating_by;
+    }
+
+    public static Retrofit getRetrofitInstance(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit;
     }
 }

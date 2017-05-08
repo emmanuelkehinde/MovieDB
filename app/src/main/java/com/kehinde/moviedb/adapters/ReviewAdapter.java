@@ -61,7 +61,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MovieViewH
         holder.txt_review_by.setText("Posted by "+review.getAuthor());
         holder.txt_review_content.setText(review.getContent());
 
-
     }
 
     @Override

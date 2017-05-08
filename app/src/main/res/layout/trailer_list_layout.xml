@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
+    android:foreground="?attr/selectableItemBackground"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="12dp">
 
@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_centerVertical="true"
         android:gravity="center_vertical">
 
         <ImageView
@@ -30,5 +31,16 @@
             android:textSize="@dimen/s16"
             />
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:id="@+id/btn_share"
+        android:visibility="gone"
+        android:textColor="@color/black4"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/share"
+        android:background="@drawable/black_border"/>
 
 </RelativeLayout>

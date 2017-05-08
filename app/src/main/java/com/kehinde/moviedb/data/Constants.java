@@ -7,12 +7,13 @@ package com.kehinde.moviedb.data;
 public class Constants {
     public static final String STATE_BUNDLE = "state_bundle";
     public static final String FRAG_TAG = "frag_tag";
+    public static final String MOVIE_LIST = "movie_post";
     public static String BUNDLE="BUNDLE";
     public static String POPULAR="popular";
     public static String TOP_RATED="top_rated";
     public static final String FAVOURITE = "favourite";
     public static String BASE_URL="https://api.themoviedb.org/3/";
-    public static final String API_KEY="c342ae2cb69a0b5a8bc0bcd7ea920d71";
+    public static final String API_KEY="[API_KEY]";
 
     public static String TITLE="title";
     public static String POSTER_URL="poster_url";

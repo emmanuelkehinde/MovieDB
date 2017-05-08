@@ -97,5 +97,4 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return movieList.size();
     }
 
-
 }

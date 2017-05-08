@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.MovieVie
 
     public interface MovieTrailerClickListener{
         void onMovieTrailerClick(int clickedTrailerIndex);
+        void onShareClick(int clickedTrailerIndex);
     }
 
 
@@ -46,11 +48,13 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.MovieVie
             implements View.OnClickListener{
 
         private TextView txt_trailer;
+        private Button btn_share;
 
         MovieViewHolder(final View itemView) {
             super(itemView);
 
             txt_trailer= (TextView) itemView.findViewById(R.id.txt_trailer);
+            btn_share= (Button) itemView.findViewById(R.id.btn_share);
             itemView.setOnClickListener(this);
         }
 
@@ -71,11 +75,20 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.MovieVie
     }
 
     @Override
-    public void onBindViewHolder(final MovieViewHolder holder, int position) {
+    public void onBindViewHolder(final MovieViewHolder holder, final int position) {
         Trailer trailer=trailerList.get(position);
+        if (position==0){
+            holder.btn_share.setVisibility(View.VISIBLE);
+        }
         int p=position+1;
         holder.txt_trailer.setText("Trailer " + String.valueOf(p));
 
+        holder.btn_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                movieTrailerClickListener.onShareClick(position);
+            }
+        });
 
     }
 

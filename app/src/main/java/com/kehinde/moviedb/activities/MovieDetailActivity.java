@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.kehinde.moviedb.R;
 import com.kehinde.moviedb.data.Constants;
+import com.kehinde.moviedb.data.DatabaseHelper;
 import com.kehinde.moviedb.data.Util;
 import com.kehinde.moviedb.fragments.MovieDetailFragment;
 import com.kehinde.moviedb.models.Movie;
@@ -17,6 +18,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private Bundle bundle;
     private MovieDetailFragment movieDetailFragment;
+    private DatabaseHelper databaseHelper;
+    private int itemCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        databaseHelper=new DatabaseHelper(this);
+        itemCount=databaseHelper.viewAllData().getCount();
 
         if (getIntent()!=null && getIntent().hasExtra(Constants.BUNDLE)) {
             bundle = getIntent().getBundleExtra(Constants.BUNDLE);
@@ -48,8 +54,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==android.R.id.home){
             if (Util.getRatingBy().equals(Constants.FAVOURITE)){
-                startActivity(new Intent(this,MovieGridActivity.class));
-                finish();
+                //Check if there is a change in the number of movies, then open a new activity or finish
+                if (databaseHelper.viewAllData().getCount() != itemCount){
+                    Intent intent=new Intent(this,MovieGridActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }else{
+                    finish();
+                }
             }
             finish();
 
@@ -62,8 +74,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         if (Util.getRatingBy().equals(Constants.FAVOURITE)){
-            startActivity(new Intent(this,MovieGridActivity.class));
-            finish();
+            //Check if there is a change in the number of movies, then open a new activity or finish
+            if (databaseHelper.viewAllData().getCount() != itemCount){
+                Intent intent=new Intent(this,MovieGridActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }else{
+                finish();
+            }
         }
 
         super.onBackPressed();
